@@ -1,0 +1,259 @@
+Código original:
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HormigasTendencia
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string ants = "...ant...ant..nat.ant.t..ant...ant..ant..ant.anant..t";
+            int alive = 0;
+            int dead = 0;
+            int a = 0;
+            int n = 0;
+            int t = 0;
+
+            for (int i = 0; i < ants.Length; i++)
+            {
+                if (i + 2 < ants.Length && ants[i] == 'a' && ants[i + 1] == 'n' && ants[i + 2] == 't')
+                {
+                    alive += 1; // Cuento la cantidad de hormigas vivas
+                }
+                if (ants[i] == 'a')
+                {
+                    a += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                }
+                if (ants[i] == 'n')
+                {
+                    n += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                }
+                if (ants[i] == 't')
+                {
+                    t += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                }
+            }
+
+            int parts = Math.Max(a, Math.Max(n, t));
+            parts -= alive;
+            dead += parts; // Por ende las cabezas que me sobran tienen que ser hormigas muertas
+
+            Console.WriteLine("Hormigas vivas: " + alive + "\nHormigas muertas: " + dead);
+            Console.ReadKey();
+        }
+    }
+}
+
+--------------------------------------------------------------------------------------
+Código Corregido:
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace hormigas_copia
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string ants = "...ant...ant..nat.ant.t..ant...ant..ant..ant.anant..t";
+            int alive = 0;
+            int dead = 0;
+            int a = 0;
+            int n = 0;
+            int t = 0;
+
+            if (ants == null)
+            {
+                dead = 0;
+                return;
+            }
+
+            for (int i = 0; i < ants.Length; i++)
+            {
+                if (ants[i] == 'a')
+                {
+                    if (i + 2 < ants.Length)
+                    {
+                        if (ants[i + 1] == 'n' && ants[i + 2] == 't') alive += 1; // Cuento la cantidad de hormigas vivas
+                    }
+                    a += 1; // Cuento la cantidad de cabezas de hormiga que hay          
+                }
+                else if (ants[i] == 'n')
+                {
+                    n += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                }
+                else if (ants[i] == 't')
+                {
+                    t += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                }
+            }
+
+            int max = 0;
+
+            if (a >= n && a >= t)
+            {
+                max = a;
+            }
+            else if (n >= a && n >= t)
+            {
+                max = n;
+            }
+            else
+            {
+                max = t;
+            }
+
+            max -= alive;
+            dead += max; // Por ende las cabezas que me sobran tienen que ser hormigas muertas
+
+            Console.WriteLine("Hormigas vivas: " + alive + "\nHormigas muertas: " + dead);
+            Console.ReadKey();
+        }
+    }
+}
+
+-----------------------------------------------------------------------------------------
+Ejecutar el benchmark:
+
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BenchmarkDotNet___Ants
+{
+    public class Program
+    {
+        public class BenchmarkExecute
+        {
+            [Benchmark]
+            public void Ants()
+            {
+                string ants = "...ant...ant..nat.ant.t..ant...ant..ant..ant.anant..t";
+                int alive = 0;
+                int dead = 0;
+                int a = 0;
+                int n = 0;
+                int t = 0;
+
+                if (ants == null)
+                {
+                    dead = 0;
+                    return;
+                }
+
+                for (int i = 0; i < ants.Length; i++)
+                {
+                    if (ants[i] == 'a')
+                    {
+                        if (i + 2 < ants.Length)
+                        {
+                            if (ants[i + 1] == 'n' && ants[i + 2] == 't') alive += 1; // Cuento la cantidad de hormigas vivas
+                        }
+                        a += 1; // Cuento la cantidad de cabezas de hormiga que hay          
+                    }
+                    else if (ants[i] == 'n')
+                    {
+                        n += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                    }
+                    else if (ants[i] == 't')
+                    {
+                        t += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                    }
+                }
+
+                int max = 0;
+
+                if (a >= n && a >= t)
+                {
+                    max = a;
+                }
+                else if (n >= a && n >= t)
+                {
+                    max = n;
+                }
+                else
+                {
+                    max = t;
+                }
+
+                max -= alive;
+                dead += max; // Por ende las cabezas que me sobran tienen que ser hormigas muertas
+                return;
+            }
+            [Benchmark (Baseline = true)]
+            public void AntsReload() 
+            {
+                string ants = "...ant...ant..nat.ant.t..ant...ant..ant..ant.anant..t";
+                int alive = 0;
+                int dead = 0;
+                int a = 0;
+                int n = 0;
+                int t = 0;
+
+                if (ants == null)
+                {
+                    dead = 0;
+                    return;
+                }
+
+                for (int i = 0; i < ants.Length; i++)
+                {
+                    if (ants[i] == 'a')
+                    {
+                        if (i + 2 < ants.Length)
+                        {
+                            if (ants[i + 1] == 'n' && ants[i + 2] == 't') alive += 1; // Cuento la cantidad de hormigas vivas
+                        }
+                        a += 1; // Cuento la cantidad de cabezas de hormiga que hay          
+                    }
+                    else if (ants[i] == 'n')
+                    {
+                        n += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                    }
+                    else if (ants[i] == 't')
+                    {
+                        t += 1; // Cuento la cantidad de cabezas de hormiga que hay
+                    }
+                }
+
+                int max = 0;
+
+                if (a >= n && a >= t)
+                {
+                    max = a;
+                }
+                else if (n >= a && n >= t)
+                {
+                    max = n;
+                }
+                else
+                {
+                    max = t;
+                }
+
+                max -= alive;
+                dead += max; // Por ende las cabezas que me sobran tienen que ser hormigas muertas
+                return;
+            }
+            
+        }
+        static void Main(string[] args)
+        {
+            var summary = BenchmarkRunner.Run<BenchmarkExecute>();
+            Console.ReadKey();
+        }
+    }
+}
